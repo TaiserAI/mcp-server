@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+      "mcp-server": {
+        "command": "node",
+        "args": [
+          "/Users/PCela/code/mcp-server/build/index.js"
+        ]
+      }
+    }
+  }
