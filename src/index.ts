@@ -2,15 +2,16 @@ import { ToolDefinition } from "./utils/types.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-import { logTool } from "./logs/logger.js";
+// import { logTool } from "./logs/logger.js";
 // import { hexToDecimalTool, decimalToHexTool } from "./lit/example-tool.js";
+
 import {
     depositIntoIporVaultTool,
     redeemFromIporVaultTool,
     vaultBalanceTool
 } from "./lit/ipor-vault.js";
 
-const server = new McpServer({ name: "mcp-server", version: "1.0.0" });
+const server = new McpServer({ name: "Wallet-mcp-server", version: "1.0.0" });
 
 // Function to register a tool
 function registerTool(tool: ToolDefinition) {
@@ -32,7 +33,7 @@ function registerTool(tool: ToolDefinition) {
 }
 
 // Register tools for logger
-registerTool(logTool);
+// registerTool(logTool);
 
 // Register tools for example
 // registerTool(hexToDecimalTool);
