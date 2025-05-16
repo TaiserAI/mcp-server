@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { executeTool } from "./tool.js";
-import { getRpcUrl } from "../utils/helpers.js";
+import { getRpcUrlByName } from "../utils/helpers.js";
 import { ToolDefinition } from "../utils/types.js";
 
 const IPOR_VAULT_IPFS_ID = "QmYa5LpTvLXHaBxHmGznyDocL6pgrQUcKYFexfjg3UJzkC";
@@ -16,12 +16,12 @@ export const depositIntoIporVaultTool: ToolDefinition = {
     },
     handler: async ({ pkpEthAddress, amount, vault, network }) => {
         try {
-            let networkUrl = getRpcUrl(network);
+            let networkUrl = getRpcUrlByName(network);
             if (!networkUrl) throw new Error(`Network not found: ${network}`);
 
             const result = await executeTool({
                 ipfsId: IPOR_VAULT_IPFS_ID,
-                toolParams: { pkpEthAddress: pkpEthAddress, action: "deposit", amount, vault, rpcUrl: networkUrl },
+                toolParams: { pkpEthAddress, action: "deposit", amount, vault, rpcUrl: networkUrl },
             });
 
             return {
@@ -48,7 +48,7 @@ export const redeemFromIporVaultTool: ToolDefinition = {
     },
     handler: async ({ pkpEthAddress, amount, vault, network }) => {
         try {
-            let networkUrl = getRpcUrl(network);
+            let networkUrl = getRpcUrlByName(network);
             if (!networkUrl) throw new Error(`Network not found: ${network}`);
 
             const result = await executeTool({
@@ -79,7 +79,7 @@ export const vaultBalanceTool: ToolDefinition = {
     },
     handler: async ({ pkpEthAddress, vault, network }) => {
         try {
-            let networkUrl = getRpcUrl(network);
+            let networkUrl = getRpcUrlByName(network);
             if (!networkUrl) throw new Error(`Network not found: ${network}`);
 
             const result = await executeTool({

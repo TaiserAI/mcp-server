@@ -2,14 +2,24 @@ import { ToolDefinition } from "./utils/types.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-// import { logTool } from "./logs/logger.js";
 // import { hexToDecimalTool, decimalToHexTool } from "./lit/example-tool.js";
-
 import {
     depositIntoIporVaultTool,
     redeemFromIporVaultTool,
     vaultBalanceTool
 } from "./lit/ipor-vault.js";
+import {
+    sendUSDCTool,
+    receiveUSDCTool
+} from "./lit/cross-chain-usdc.js";
+import {
+    fulfillDepositTool,
+    fulfillRedeemTool,
+    takeAssetsTool,
+    returnAssetsTool,
+    updateInvestedTool,
+    asyncBalanceTool
+} from "./lit/async-vault-admin.js";
 
 const server = new McpServer({ name: "Wallet-mcp-server", version: "1.0.0" });
 
@@ -32,9 +42,6 @@ function registerTool(tool: ToolDefinition) {
     );
 }
 
-// Register tools for logger
-// registerTool(logTool);
-
 // Register tools for example
 // registerTool(hexToDecimalTool);
 // registerTool(decimalToHexTool);
@@ -44,6 +51,17 @@ registerTool(depositIntoIporVaultTool);
 registerTool(redeemFromIporVaultTool);
 registerTool(vaultBalanceTool);
 
+// Register tools for CCTP-USDC
+registerTool(sendUSDCTool);
+registerTool(receiveUSDCTool);
+
+// Register tools for ERC7540 Admin
+registerTool(fulfillDepositTool);
+registerTool(fulfillRedeemTool);
+registerTool(takeAssetsTool);
+registerTool(returnAssetsTool);
+registerTool(updateInvestedTool);
+registerTool(asyncBalanceTool);
 
 // Connect to stdio transport
 const transport = new StdioServerTransport();
