@@ -3,7 +3,7 @@ import { executeTool } from "./tool.js";
 import { ToolDefinition } from "../utils/types.js";
 import { getRpcUrlByName, getChainIDByNetwork } from "../utils/helpers.js";
 
-const CCTP_USDC_IPFS_ID = "QmPnXdFWgcsKJEQfPgAv1dr2TJ6BN7dpqgUDLEftyMY52J";
+const CCTP_USDC_IPFS_ID = "Qmf38LoU2S7HZPsoKsmgBE1kj9ENN6sxVSkH2i1q9sTBTU";
 
 export const sendUSDCTool: ToolDefinition = {
     name: "send-usdc-cross-chain",
