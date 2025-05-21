@@ -72,7 +72,7 @@ export const receiveUSDCTool: ToolDefinition = {
                     pkpEthAddress: pkpEthAddress,
                     action: "receive",
                     opChainId: fromChainID,
-                    amount: 0,
+                    amount: 1,
                     burnTx,
                     rpcUrl: networkUrl
                 },

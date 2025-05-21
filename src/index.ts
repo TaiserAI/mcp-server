@@ -20,6 +20,7 @@ import {
     updateInvestedTool,
     asyncBalanceTool
 } from "./lit/async-vault-admin.js";
+import { allocationsTool } from "./lit/allocations.js"
 
 const server = new McpServer({ name: "Wallet-mcp-server", version: "1.0.0" });
 
@@ -62,6 +63,9 @@ registerTool(takeAssetsTool);
 registerTool(returnAssetsTool);
 registerTool(updateInvestedTool);
 registerTool(asyncBalanceTool);
+
+// Register tool for allocations
+registerTool(allocationsTool);
 
 // Connect to stdio transport
 const transport = new StdioServerTransport();

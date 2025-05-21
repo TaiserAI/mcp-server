@@ -7,3 +7,11 @@ export type ToolDefinition = {
         isError: boolean;
     }>;
 };
+
+export type TokenBalance = {
+  name: string;
+  symbol: string;
+  balance: number;
+  value: number;
+  network: string;
+};
