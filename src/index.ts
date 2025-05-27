@@ -1,8 +1,11 @@
+import { config } from "./utils/ai-config.js";
+import { Logger } from "./utils/logger.js";
+
 import { ToolDefinition } from "./utils/types.js";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-
 // import { hexToDecimalTool, decimalToHexTool } from "./lit/example-tool.js";
+
 import {
     depositIntoIporVaultTool,
     redeemFromIporVaultTool,
@@ -23,6 +26,7 @@ import {
 import { allocationsTool } from "./lit/allocations.js"
 
 const server = new McpServer({ name: "Wallet-mcp-server", version: "1.0.0" });
+Logger.init();
 
 // Function to register a tool
 function registerTool(tool: ToolDefinition) {
@@ -31,7 +35,15 @@ function registerTool(tool: ToolDefinition) {
         tool.description,
         tool.inputSchema,
         async (extra: any) => {
-            const result = await tool.handler(extra);
+            Logger.logToolCall(tool.name, extra);
+            let result;
+            try {
+                result = await tool.handler(extra);
+            } catch (err) {
+                Logger.logToolResponse(tool.name, { error: err instanceof Error ? err.message : String(err) });
+                throw err;
+            }
+            Logger.logToolResponse(tool.name, result);
             return {
                 content: result.content.map(item => ({
                     ...item,
@@ -43,29 +55,33 @@ function registerTool(tool: ToolDefinition) {
     );
 }
 
-// Register tools for example
-// registerTool(hexToDecimalTool);
-// registerTool(decimalToHexTool);
+// Map of all available tool definitions
+const allTools: Record<string, ToolDefinition> = {
+    depositIntoIporVaultTool,
+    redeemFromIporVaultTool,
+    vaultBalanceTool,
+    sendUSDCTool,
+    receiveUSDCTool,
+    fulfillDepositTool,
+    fulfillRedeemTool,
+    takeAssetsTool,
+    returnAssetsTool,
+    updateInvestedTool,
+    asyncBalanceTool,
+    allocationsTool,
+    // hexToDecimalTool,
+    // decimalToHexTool,
+};
 
-// Register tools for IPOR vault
-registerTool(depositIntoIporVaultTool);
-registerTool(redeemFromIporVaultTool);
-registerTool(vaultBalanceTool);
-
-// Register tools for CCTP-USDC
-registerTool(sendUSDCTool);
-registerTool(receiveUSDCTool);
-
-// Register tools for ERC7540 Admin
-registerTool(fulfillDepositTool);
-registerTool(fulfillRedeemTool);
-registerTool(takeAssetsTool);
-registerTool(returnAssetsTool);
-registerTool(updateInvestedTool);
-registerTool(asyncBalanceTool);
-
-// Register tool for allocations
-registerTool(allocationsTool);
+// Register only the tools listed in the config
+for (const toolName of config.tools) {
+    const tool = allTools[toolName];
+    if (tool) {
+        registerTool(tool);
+    } else {
+        console.warn(`Tool "${toolName}" not found in available tool definitions.`);
+    }
+}
 
 // Connect to stdio transport
 const transport = new StdioServerTransport();
