@@ -10,7 +10,7 @@ import {
     depositIntoIporVaultTool,
     redeemFromIporVaultTool,
     vaultBalanceTool
-} from "./lit/ipor-vault.js";
+} from "./lit/erc4626-vault.js";
 import {
     sendUSDCTool,
     receiveUSDCTool

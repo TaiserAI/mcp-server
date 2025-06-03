@@ -9,10 +9,10 @@ export const sendUSDCTool: ToolDefinition = {
     name: "send-usdc-cross-chain",
     description: "Send USDC cross-chain using CCTP",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
-        amount: z.string().describe("Amount to deposit"),
-        fromChain: z.string().describe("Network of the source chain to transfer from"),
-        toChain: z.string().describe("Network of the destination chain to transfer to"),
+        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
+        amount: z.string().describe("Amount to send"),
+        fromChain: z.string().describe("Source chain"),
+        toChain: z.string().describe("Destination chain"),
     },
     handler: async ({ pkpEthAddress, amount, fromChain, toChain }) => {
         try {
@@ -51,12 +51,12 @@ export const receiveUSDCTool: ToolDefinition = {
     name: "receive-usdc-cross-chain",
     description: "Receive USDC cross-chain using CCTP",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
+        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
         burnTx: z.string()
             .regex(/^(0x[a-fA-F0-9]{64}|)$/, 'Must be a valid Ethereum transaction hash (0x followed by 64 hexadecimal characters)')
             .describe("Burn transaction hash from source chain"),
-        fromChain: z.string().describe("Network of the source chain to transfer from"),
-        toChain: z.string().describe("Network of the destination chain to transfer to"),
+        fromChain: z.string().describe("Source chain"),
+        toChain: z.string().describe("Destination chain"),
     },
     handler: async ({ pkpEthAddress, burnTx, fromChain, toChain }) => {
         try {

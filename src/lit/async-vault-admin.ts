@@ -7,18 +7,18 @@ const ASYNC_VAULT_ADMIN_IPFS_ID = "QmQBjZebUnxHbF9XUuszNxKH9ZUcuW74vskS3uEPyTtou
 
 export const fulfillDepositTool: ToolDefinition = {
     name: "async-vault-fulfill-deposit",
-    description: "Fulfills a user's pending deposit into the vault asynchronously.",
+    description: "Accepts a pending deposit and swaps it for teller tokens",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
-        controller: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("A user wallet of the system"),
-        amount: z.string().describe("Amount of assets or shares to be processed"),
-        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("The vault address"),
-        network: z.string().describe("Network to use"),
+        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
+        controller: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Depositor wallet address"),
+        amount: z.string().describe("Amount of deposits to swap for teller tokens"),
+        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Teller address"),
+        chain: z.string().describe("Chain"),
     },
-    handler: async ({ pkpEthAddress, controller, amount, vault, network }) => {
+    handler: async ({ pkpEthAddress, controller, amount, vault, chain }) => {
         try {
-            let networkUrl = getRpcUrlByName(network);
-            if (!networkUrl) throw new Error(`Network not found: ${network}`);
+            let chainRpcUrl = getRpcUrlByName(chain);
+            if (!chainRpcUrl) throw new Error(`Chain not found: ${chain}`);
 
             const result = await executeTool({
                 ipfsId: ASYNC_VAULT_ADMIN_IPFS_ID,
@@ -28,7 +28,7 @@ export const fulfillDepositTool: ToolDefinition = {
                     amount,
                     action: "fulfillDeposit",
                     vault,
-                    rpcUrl: networkUrl
+                    rpcUrl: chainRpcUrl
                 },
             });
 
@@ -47,18 +47,18 @@ export const fulfillDepositTool: ToolDefinition = {
 
 export const fulfillRedeemTool: ToolDefinition = {
     name: "async-vault-fulfill-redeem",
-    description: "Fulfills a user's pending redemption request from the vault asynchronously.",
+    description: "Accepts a pending redemption and swaps it for teller assets",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
-        controller: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("A user wallet of the system"),
-        amount: z.string().describe("Amount of assets or shares to be processed"),
-        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("The vault address"),
-        network: z.string().describe("Network to use"),
+        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
+        controller: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Depositor wallet address"),
+        amount: z.string().describe("Amount of deposits to swap for teller tokens"),
+        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Teller address"),
+        chain: z.string().describe("Chain"),
     },
-    handler: async ({ pkpEthAddress, controller, amount, vault, network }) => {
+    handler: async ({ pkpEthAddress, controller, amount, vault, chain }) => {
         try {
-            let networkUrl = getRpcUrlByName(network);
-            if (!networkUrl) throw new Error(`Network not found: ${network}`);
+            let chainRpcUrl = getRpcUrlByName(chain);
+            if (!chainRpcUrl) throw new Error(`Chain not found: ${chain}`);
 
             const result = await executeTool({
                 ipfsId: ASYNC_VAULT_ADMIN_IPFS_ID,
@@ -68,7 +68,7 @@ export const fulfillRedeemTool: ToolDefinition = {
                     amount,
                     action: "fulfillRedeem",
                     vault,
-                    rpcUrl: networkUrl
+                    rpcUrl: chainRpcUrl
                 },
             });
 
@@ -87,17 +87,17 @@ export const fulfillRedeemTool: ToolDefinition = {
 
 export const takeAssetsTool: ToolDefinition = {
     name: "async-vault-take-assets",
-    description: "Transfers assets from the vault to the agent wallet for off-chain or cross-chain use.",
+    description: "Takes assets from the teller into the owner wallet",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
-        amount: z.string().describe("Amount of assets or shares to be processed"),
-        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("The vault address"),
-        network: z.string().describe("Network to use"),
+        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
+        amount: z.string().describe("Amount of deposits to take from the teller"),
+        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Teller address"),
+        chain: z.string().describe("Chain"),
     },
-    handler: async ({ pkpEthAddress, amount, vault, network }) => {
+    handler: async ({ pkpEthAddress, amount, vault, chain }) => {
         try {
-            let networkUrl = getRpcUrlByName(network);
-            if (!networkUrl) throw new Error(`Network not found: ${network}`);
+            let chainRpcUrl = getRpcUrlByName(chain);
+            if (!chainRpcUrl) throw new Error(`Chain not found: ${chain}`);
 
             const result = await executeTool({
                 ipfsId: ASYNC_VAULT_ADMIN_IPFS_ID,
@@ -107,7 +107,7 @@ export const takeAssetsTool: ToolDefinition = {
                     amount,
                     action: "takeAssets",
                     vault,
-                    rpcUrl: networkUrl
+                    rpcUrl: chainRpcUrl
                 },
             });
 
@@ -126,17 +126,17 @@ export const takeAssetsTool: ToolDefinition = {
 
 export const returnAssetsTool: ToolDefinition = {
     name: "async-vault-return-assets",
-    description: "Returns assets from the agent wallet back to the vault.",
+    description: "Send assets from the owner wallet to the  teller",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
-        amount: z.string().describe("Amount of assets or shares to be processed"),
-        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("The vault address"),
-        network: z.string().describe("Network to use"),
+        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
+        amount: z.string().describe("Amount to return to the teller"),
+        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Teller address"),
+        chain: z.string().describe("Chain"),
     },
-    handler: async ({ pkpEthAddress, amount, vault, network }) => {
+    handler: async ({ pkpEthAddress, amount, vault, chain }) => {
         try {
-            let networkUrl = getRpcUrlByName(network);
-            if (!networkUrl) throw new Error(`Network not found: ${network}`);
+            let chainRpcUrl = getRpcUrlByName(chain);
+            if (!chainRpcUrl) throw new Error(`Chain not found: ${chain}`);
 
             const result = await executeTool({
                 ipfsId: ASYNC_VAULT_ADMIN_IPFS_ID,
@@ -146,7 +146,7 @@ export const returnAssetsTool: ToolDefinition = {
                     amount,
                     action: "returnAssets",
                     vault,
-                    rpcUrl: networkUrl
+                    rpcUrl: chainRpcUrl
                 },
             });
 
@@ -165,17 +165,17 @@ export const returnAssetsTool: ToolDefinition = {
 
 export const updateInvestedTool: ToolDefinition = {
     name: "async-vault-update-invested",
-    description: "Updates the total USD value of the assets currently invested by the agent.",
+    description: "Updates the total USD value of the assets currently invested by the owner",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
-        amount: z.string().describe("Amount of assets or shares to be processed"),
-        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("The vault address"),
-        network: z.string().describe("Network to use"),
+        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
+        amount: z.string().describe("Amount to update in the teller"),
+        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Teller address"),
+        chain: z.string().describe("Chain"),
     },
-    handler: async ({ pkpEthAddress, amount, vault, network }) => {
+    handler: async ({ pkpEthAddress, amount, vault, chain }) => {
         try {
-            let networkUrl = getRpcUrlByName(network);
-            if (!networkUrl) throw new Error(`Network not found: ${network}`);
+            let chainRpcUrl = getRpcUrlByName(chain);
+            if (!chainRpcUrl) throw new Error(`Chain not found: ${chain}`);
 
             const result = await executeTool({
                 ipfsId: ASYNC_VAULT_ADMIN_IPFS_ID,
@@ -185,7 +185,7 @@ export const updateInvestedTool: ToolDefinition = {
                     amount,
                     action: "updateInvested",
                     vault,
-                    rpcUrl: networkUrl
+                    rpcUrl: chainRpcUrl
                 },
             });
 
@@ -204,16 +204,16 @@ export const updateInvestedTool: ToolDefinition = {
 
 export const asyncBalanceTool: ToolDefinition = {
     name: "async-vault-balance",
-    description: "Retrieves the current allocation of the vault's assets across chains and agent wallets.",
+    description: "Retrieves the a list of owner assets",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
-        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("The vault address"),
-        network: z.string().describe("Network to use"),
+        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
+        vault: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Teller address"),
+        chain: z.string().describe("Chain"),
     },
-    handler: async ({ pkpEthAddress, vault, network }) => {
+    handler: async ({ pkpEthAddress, vault, chain }) => {
         try {
-            let networkUrl = getRpcUrlByName(network);
-            if (!networkUrl) throw new Error(`Network not found: ${network}`);
+            let chainRpcUrl = getRpcUrlByName(chain);
+            if (!chainRpcUrl) throw new Error(`Chain not found: ${chain}`);
 
             const result = await executeTool({
                 ipfsId: ASYNC_VAULT_ADMIN_IPFS_ID,
@@ -223,7 +223,7 @@ export const asyncBalanceTool: ToolDefinition = {
                     amount: 0,
                     action: "getValues",
                     vault,
-                    rpcUrl: networkUrl
+                    rpcUrl: chainRpcUrl
                 },
             });
 

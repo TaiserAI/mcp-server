@@ -33,21 +33,21 @@ const parseData = (jsonData: any, network: string) => {
 
 export const allocationsTool: ToolDefinition = {
     name: "get-allocations-by-wallet",
-    description: "Get the allocations for a wallet",
+    description: "Get the allocations for a wallet in Base and Arbitrum",
     inputSchema: {
-        pkpEthAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("PKP ETH address"),
+        address: z.string().regex(/^0x[a-fA-F0-9]{40}$/).describe("Owner wallet address"),
     },
-    handler: async ({ pkpEthAddress }) => {
+    handler: async ({ address }) => {
         try {
             let jsonData;
             let allocations: TokenBalance[] = [];
 
             let chainId = 1;
-            // const mainnetResponse = await fetch(`${BALANCE_URL}&address=${pkpEthAddress}&chain_id=${chainId}`, OPTIONS);
+            // const mainnetResponse = await fetch(`${BALANCE_URL}&address=${address}&chain_id=${chainId}`, OPTIONS);
             chainId = 8453;
-            const baseResponse = await fetch(`${BALANCE_URL}&address=${pkpEthAddress}&chain_id=${chainId}`, OPTIONS);
+            const baseResponse = await fetch(`${BALANCE_URL}&address=${address}&chain_id=${chainId}`, OPTIONS);
             chainId = 42161;
-            const arbitrumResponse = await fetch(`${BALANCE_URL}&address=${pkpEthAddress}&chain_id=${chainId}`, OPTIONS);
+            const arbitrumResponse = await fetch(`${BALANCE_URL}&address=${address}&chain_id=${chainId}`, OPTIONS);
 
             // if (mainnetResponse.ok) {
             //     jsonData = await mainnetResponse.json();
